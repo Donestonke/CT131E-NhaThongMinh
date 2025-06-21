@@ -97,12 +97,32 @@ int main(){
                 printf("\n[ESC]: Exit");
             }else if(mode == 1){
                 gotoxy(0, 21);
-                printf("[1]: Turn %s the light", lightsOn ? "off" : "on");
+                printf("[1]: Turn %s the light", lightsOn ? "off" : "on"); 
                 printf("\n[0]: Back to main menu");
             }else if(mode == 2){
+                // Lấy thời gian hiện tại
+                time_t now = time(NULL);
+                struct tm *local = localtime(&now);
+                int hour = local->tm_hour;
+
                 gotoxy(0, 21);
                 printf("Light turns on at 18:00, off at 6:00\n");
+                printf("Current hour: %02d\n", hour);
                 printf("\n[0]: Back to main menu");
+
+                if(hour >= 18 || hour < 6){
+                    if(!lightsOn){
+                        lightsOn = 1;
+                        clearAtPositions(MiddleHallway, 7, "🟡");
+                        clearAtPositions(LeftHallway, 5, "🟡");
+                        clearAtPositions(RightHallway, 5, "🟡");
+                    }
+                }else if(lightsOn){
+                        lightsOn = 0;
+                        printAtPositions(MiddleHallway, 7, "⚪");
+                        printAtPositions(LeftHallway, 5, "⚪");
+                        printAtPositions(RightHallway, 5, "⚪");
+                    }
             }
             if(kbhit()) {
                 input = getch();
@@ -131,26 +151,6 @@ int main(){
                 }
                 else if(mode == 2){
                     if(input == '0') mode = 0;
-                    // Lấy thời gian hiện tại
-                time_t now = time(NULL);
-                struct tm *local = localtime(&now);
-                int hour = local->tm_hour;
-
-                gotoxy(0,22);
-                printf("Current hour: %02d\n", hour);
-                if(hour >= 18 || hour < 6){
-                    if(!lightsOn){
-                        lightsOn = 1;
-                        clearAtPositions(MiddleHallway, 7, "🟡");
-                        clearAtPositions(LeftHallway, 5, "🟡");
-                        clearAtPositions(RightHallway, 5, "🟡");
-                    }
-                }else if(lightsOn){
-                        lightsOn = 0;
-                        printAtPositions(MiddleHallway, 7, "⚪");
-                        printAtPositions(LeftHallway, 5, "⚪");
-                        printAtPositions(RightHallway, 5, "⚪");
-                    }
                 }
             }
             Sleep(110); //Chống lag hoặc nhấp nháy
