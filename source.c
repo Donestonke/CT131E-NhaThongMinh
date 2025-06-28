@@ -31,7 +31,7 @@ void clearAtPositions(int positions[][2], int count, const char* bruh) {
 void clearMenu(){
     for(int i = 23; i < 32; i++){
     gotoxy(0,i);
-    printf("                                     ");
+    printf("                                                                                                     ");
     }
 }
 
@@ -49,12 +49,23 @@ void printColorAtPosition(int position[0][2], int count, const char* text, int c
 int lightsOn, middleLightsOn, leftLightsOn, rightLightsOn = 0;
 
 // Trạng thái các thiết bị
+int systemPowerOn = 1;
+int powerCutOffActive = 0;
+int totalDevices = 0;
 int bathroomWaterOn = 0;
 int livingRoomTVOn = 0;
 int livingRoomLightOn, kitchenLightOn, bathroomLightOn, garageLightOn, bedroomLightOn, storageLightOn = 0;
 int livingRoomACOn, bedroomACon = 0;
 int kitchenVentOn, bathroomVentOn, garageVentOn, storageVentOn = 0;
 int livingRoomDevicesOn, kitchenDevicesOn, BedroomDevicesOn, GarageDevicesOn, StorageDevicesOn, BathroomDevicesOn = 0;
+
+int savedLightsOn, savedMiddleLightsOn, savedLeftLightsOn, savedRightLightsOn;
+int savedLivingRoomTVOn, savedLivingRoomLightOn, savedLivingRoomACOn;
+int savedKitchenLightOn, savedKitchenVentOn;
+int savedBedroomLightOn, savedBedroomACon;
+int savedGarageLightOn, savedGarageVentOn;
+int savedBathroomLightOn, savedBathroomVentOn, savedBathroomWaterOn;
+int savedStorageLightOn, savedStorageVentOn;
  
 //Hallway
 int MiddleHallway [][2] = { {10,11}, {19,11}, {29,11}, {39,11}, {49,11}, {59,11}, {69,11} };
@@ -90,10 +101,24 @@ void TripleONOFF(){
     StorageDevicesOn = (storageLightOn && storageVentOn) ? 1 : 0;
     BathroomDevicesOn = (bathroomLightOn && bathroomVentOn && bathroomWaterOn) ? 1 : 0;
     GarageDevicesOn = (garageLightOn && garageVentOn) ? 1 : 0;
+    totalDevices = (middleLightsOn && rightLightsOn && leftLightsOn && livingRoomACOn && livingRoomLightOn && livingRoomTVOn && kitchenLightOn && kitchenVentOn && bedroomACon && bedroomLightOn && storageLightOn && storageVentOn && bathroomLightOn && bathroomVentOn && bathroomWaterOn && garageLightOn && garageVentOn)? 1 : 0;
 }
 
+int IfPowerOff(){
+    if(!systemPowerOn) {
+        clearMenu();
+        gotoxy(0, 24);
+        printf("⚠️  SYSTEM POWER IS OFF!");
+        printf("\nRestore power first to use devices.");
+        Sleep(1500);
+        FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+        clearMenu();
+        return 1;
+    } return 0;
+}
 //Toggle function for Hallway
 void MiddleONOFF(){
+    if(IfPowerOff()) return;
     middleLightsOn = !middleLightsOn;
      if(middleLightsOn){
         clearAtPositions(MiddleHallway, 7, "🟡");
@@ -102,6 +127,7 @@ void MiddleONOFF(){
     } TripleONOFF();
 }
 void LeftONOFF(){
+    if(IfPowerOff()) return;
     leftLightsOn = !leftLightsOn;
      if(leftLightsOn){
         clearAtPositions(LeftHallway, 5, "🟡");
@@ -110,6 +136,7 @@ void LeftONOFF(){
     } TripleONOFF();
 }
 void RightONOFF(){
+    if(IfPowerOff()) return;
     rightLightsOn = !rightLightsOn;
      if(rightLightsOn){
         clearAtPositions(RightHallway, 5, "🟡");
@@ -118,6 +145,7 @@ void RightONOFF(){
     } TripleONOFF();
 }
 void toggleAllLights() {
+    if(IfPowerOff()) return;
     if(lightsOn) {
         clearAtPositions(MiddleHallway, 7, "🟡");
         clearAtPositions(LeftHallway, 5, "🟡");
@@ -131,6 +159,7 @@ void toggleAllLights() {
 
 //Toggle function for LivingRoom
 void toggleLivingRoomLight(){
+    if(IfPowerOff()) return;
     livingRoomLightOn = !livingRoomLightOn;
     if(livingRoomLightOn){
         printColorAtPosition(livingRoomLightPos, 1, "Light", 14); // Bật - màu vàng
@@ -139,6 +168,7 @@ void toggleLivingRoomLight(){
     } TripleONOFF();
 }
 void toggleLivingRoomTV(){
+    if(IfPowerOff()) return;
     livingRoomTVOn = !livingRoomTVOn;
     if(livingRoomTVOn){
         printColorAtPosition(LivingroomTVPos, 1, "TV", 10);
@@ -147,6 +177,7 @@ void toggleLivingRoomTV(){
     } TripleONOFF();
 }
 void toggleLivingRoomAC(){
+    if(IfPowerOff()) return;
     livingRoomACOn = !livingRoomACOn;
     if(livingRoomACOn){
         printColorAtPosition(LivingRoomacPos, 1, "AC", 11);
@@ -155,6 +186,7 @@ void toggleLivingRoomAC(){
     } TripleONOFF();
 }
 void toggleLivingRoomDevices(){
+    if(IfPowerOff()) return;
     if(livingRoomDevicesOn){
         printColorAtPosition(LivingRoomacPos, 1, "AC", 11);
         printColorAtPosition(livingRoomLightPos, 1, "Light", 14);
@@ -168,6 +200,7 @@ void toggleLivingRoomDevices(){
 
 //Toggle function for kitchen
 void toggleKitchenLight(){
+    if(IfPowerOff()) return;
     kitchenLightOn = !kitchenLightOn;
     if(kitchenLightOn){
         printColorAtPosition(kitchenLightPos, 1, "Light", 14);
@@ -176,6 +209,7 @@ void toggleKitchenLight(){
     } TripleONOFF();
 }
 void toggleKitchenVent(){
+    if(IfPowerOff()) return;
     kitchenVentOn = !kitchenVentOn;
     if(kitchenVentOn){
         printColorAtPosition(kitchenVentPos, 1, "CH", 5);
@@ -184,6 +218,7 @@ void toggleKitchenVent(){
     } TripleONOFF();
 }
 void toggleKitchenDevices(){
+    if(IfPowerOff()) return;
     if(kitchenDevicesOn){
         printColorAtPosition(kitchenLightPos, 1, "Light", 14);
         printColorAtPosition(kitchenVentPos, 1, "CH", 5);
@@ -195,6 +230,7 @@ void toggleKitchenDevices(){
 
 //Toggle function for bedroom
 void toggleBedroomLight(){
+    if(IfPowerOff()) return;
     bedroomLightOn = !bedroomLightOn;
     if(bedroomLightOn){
         printColorAtPosition(BedroomLightPos, 1, "Light", 14);
@@ -203,6 +239,7 @@ void toggleBedroomLight(){
     } TripleONOFF();
 }
 void toggleBedroomAC(){
+    if(IfPowerOff()) return;
     bedroomACon = !bedroomACon;
     if(bedroomACon){
         printColorAtPosition(BedRoomACPos, 1, "AC", 11);
@@ -211,6 +248,7 @@ void toggleBedroomAC(){
     } TripleONOFF();
 }
 void toggleBedroomDevices(){
+    if(IfPowerOff()) return;
     if(BedroomDevicesOn){
         printColorAtPosition(BedroomLightPos, 1, "Light", 14);
         printColorAtPosition(BedRoomACPos, 1, "AC", 11);
@@ -222,6 +260,7 @@ void toggleBedroomDevices(){
 
 //Toggle function for Garage
 void toggleGarageLight(){
+    if(IfPowerOff()) return;
     garageLightOn = !garageLightOn;
     if(garageLightOn){
         printColorAtPosition(GarageLightPos, 1, "Light", 14);
@@ -230,6 +269,7 @@ void toggleGarageLight(){
     } TripleONOFF();
 }
 void toggleGarageVent(){
+    if(IfPowerOff()) return;
     garageVentOn = !garageVentOn;
     if(garageVentOn){
         printColorAtPosition(garageVentPos, 1, "CH", 5);
@@ -238,6 +278,7 @@ void toggleGarageVent(){
     } TripleONOFF();
 }
 void toggleGarageDevices(){
+    if(IfPowerOff()) return;
     if(GarageDevicesOn){
         printColorAtPosition(GarageLightPos, 1, "Light", 14);
         printColorAtPosition(garageVentPos, 1, "CH", 5);
@@ -249,6 +290,7 @@ void toggleGarageDevices(){
 
 //Toggle function for Bathroom
 void toggleBathroomLight(){
+    if(IfPowerOff()) return;
     bathroomLightOn = !bathroomLightOn;
     if(bathroomLightOn){
         printColorAtPosition(bathroomLightPos, 1, "Light", 14); 
@@ -257,6 +299,7 @@ void toggleBathroomLight(){
     } TripleONOFF();
 }
 void toggleBathroomCH(){
+    if(IfPowerOff()) return;
     bathroomVentOn = !bathroomVentOn;
     if(bathroomVentOn){
         printColorAtPosition(bathroomVentPos, 1, "CH", 5);
@@ -265,6 +308,7 @@ void toggleBathroomCH(){
     } TripleONOFF();
 }
 void toggleBathroomWater(){
+    if(IfPowerOff()) return;
     bathroomWaterOn = !bathroomWaterOn;
     if(bathroomWaterOn){
         printColorAtPosition(bathroomWaterPos, 1, "Water", 9);
@@ -273,6 +317,7 @@ void toggleBathroomWater(){
     } TripleONOFF();
 }
 void toggleBathroomDevices(){
+    if(IfPowerOff()) return;
     if(BathroomDevicesOn){
         printColorAtPosition(bathroomWaterPos, 1, "Water", 9);
         printColorAtPosition(bathroomLightPos, 1, "Light", 14);
@@ -286,6 +331,7 @@ void toggleBathroomDevices(){
 
 //Toggle function for Storage
 void toggleStorageLight(){
+    if(IfPowerOff()) return;
     storageLightOn = !storageLightOn;
     if(storageLightOn){
         printColorAtPosition(storageLightPos, 1, "Light", 14);
@@ -294,6 +340,7 @@ void toggleStorageLight(){
     } TripleONOFF();
 }
 void toggleStorageVent(){
+    if(IfPowerOff()) return;
     storageVentOn = !storageVentOn;
     if(storageVentOn){
         printColorAtPosition(storageVentPos, 1, "CH", 5);
@@ -302,12 +349,180 @@ void toggleStorageVent(){
     } TripleONOFF();
 }
 void toggleStorageDevices(){
+    if(IfPowerOff()) return;
     if(StorageDevicesOn){
         printColorAtPosition(storageLightPos, 1, "Light", 14);
         printColorAtPosition(storageVentPos, 1, "CH", 5);
     }else{
         printColorAtPosition(storageLightPos, 1, "Light", 7);
         printColorAtPosition(storageVentPos, 1, "CH", 7);      
+    }
+}
+
+void restorePreviousState(){
+    // Khôi phục trạng thái trước khi cúp điện
+    lightsOn = savedLightsOn;
+    middleLightsOn = savedMiddleLightsOn;
+    leftLightsOn = savedLeftLightsOn;
+    rightLightsOn = savedRightLightsOn;
+    livingRoomTVOn = savedLivingRoomTVOn;
+    livingRoomLightOn = savedLivingRoomLightOn;
+    livingRoomACOn = savedLivingRoomACOn;
+    kitchenLightOn = savedKitchenLightOn;
+    kitchenVentOn = savedKitchenVentOn;
+    bedroomLightOn = savedBedroomLightOn;
+    bedroomACon = savedBedroomACon;
+    garageLightOn = savedGarageLightOn;
+    garageVentOn = savedGarageVentOn;
+    bathroomLightOn = savedBathroomLightOn;
+    bathroomVentOn = savedBathroomVentOn;
+    bathroomWaterOn = savedBathroomWaterOn;
+    storageLightOn = savedStorageLightOn;
+    storageVentOn = savedStorageVentOn;
+    
+    // Cập nhật các biến tổng hợp
+    TripleONOFF();
+    
+    // Hiển thị trạng thái đã lưu
+    if(lightsOn){
+        clearAtPositions(MiddleHallway, 7, "🟡");
+        clearAtPositions(LeftHallway, 5, "🟡");
+        clearAtPositions(RightHallway, 5, "🟡");
+    }else{
+        printAtPositions(MiddleHallway, 7, "⚪");
+        printAtPositions(LeftHallway, 5, "⚪");
+        printAtPositions(RightHallway, 5, "⚪");
+    }
+    
+    // Hiển thị từng thiết bị theo trạng thái đã lưu
+    printColorAtPosition(LivingRoomacPos, 1, "AC", savedLivingRoomACOn ? 11 : 7);
+    printColorAtPosition(livingRoomLightPos, 1, "Light", savedLivingRoomLightOn ? 14 : 7);
+    printColorAtPosition(LivingroomTVPos, 1, "TV", savedLivingRoomTVOn ? 10 : 7);
+    printColorAtPosition(kitchenLightPos, 1, "Light", savedKitchenLightOn ? 14 : 7);
+    printColorAtPosition(kitchenVentPos, 1, "CH", savedKitchenVentOn ? 5 : 7);
+    printColorAtPosition(BedroomLightPos, 1, "Light", savedBedroomLightOn ? 14 : 7);
+    printColorAtPosition(BedRoomACPos, 1, "AC", savedBedroomACon ? 11 : 7);
+    printColorAtPosition(GarageLightPos, 1, "Light", savedGarageLightOn ? 14 : 7);
+    printColorAtPosition(garageVentPos, 1, "CH", savedGarageVentOn ? 5 : 7);
+    printColorAtPosition(bathroomWaterPos, 1, "Water", savedBathroomWaterOn ? 9 : 7);
+    printColorAtPosition(bathroomLightPos, 1, "Light", savedBathroomLightOn ? 14 : 7);
+    printColorAtPosition(bathroomVentPos, 1, "CH", savedBathroomVentOn ? 5 : 7);
+    printColorAtPosition(storageLightPos, 1, "Light", savedStorageLightOn ? 14 : 7);
+    printColorAtPosition(storageVentPos, 1, "CH", savedStorageVentOn ? 5 : 7);
+
+    systemPowerOn = 1;
+    powerCutOffActive = 0;
+    
+    clearMenu();
+}
+
+//Toggle function for all Devices
+void cutOffAllPower(){
+if(powerCutOffActive) {
+        clearMenu();
+        gotoxy(0, 24);
+        printf("Bro really try to cut off power again 🙏💔");
+        printf("\nYou are insane dude");
+        Sleep(4000);
+        FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
+        printf("\n\n[1]: Restore Previous State");
+        printf("\n[ESC]: Continue with power off");
+        // Chờ người dùng chọn
+        char choice;
+        while(1){
+            if(kbhit()){
+                choice = getch();
+                if(choice == '1'){
+                    clearMenu();
+                    restorePreviousState();
+                    break;
+                }else if(choice == 27){ // ESC
+                    clearMenu();
+                    break;
+                }
+            }
+            Sleep(10);
+        }
+        return;
+    }
+
+    powerCutOffActive = 1;
+    // Lưu trạng thái hiện tại trước khi tắt
+    savedLightsOn = lightsOn;
+    savedMiddleLightsOn = middleLightsOn;
+    savedLeftLightsOn = leftLightsOn;
+    savedRightLightsOn = rightLightsOn;
+    savedLivingRoomTVOn = livingRoomTVOn;
+    savedLivingRoomLightOn = livingRoomLightOn;
+    savedLivingRoomACOn = livingRoomACOn;
+    savedKitchenLightOn = kitchenLightOn;
+    savedKitchenVentOn = kitchenVentOn;
+    savedBedroomLightOn = bedroomLightOn;
+    savedBedroomACon = bedroomACon;
+    savedGarageLightOn = garageLightOn;
+    savedGarageVentOn = garageVentOn;
+    savedBathroomLightOn = bathroomLightOn;
+    savedBathroomVentOn = bathroomVentOn;
+    savedBathroomWaterOn = bathroomWaterOn;
+    savedStorageLightOn = storageLightOn;
+    savedStorageVentOn = storageVentOn;
+    
+    // Tắt tất cả thiết bị
+    lightsOn = middleLightsOn = leftLightsOn = rightLightsOn = 0;
+    livingRoomTVOn = livingRoomLightOn = livingRoomACOn = 0;
+    kitchenLightOn = kitchenVentOn = 0;
+    bedroomLightOn = bedroomACon = 0;
+    garageLightOn = garageVentOn = 0;
+    bathroomLightOn = bathroomVentOn = bathroomWaterOn = 0;
+    storageLightOn = storageVentOn = 0;
+    
+    // Cập nhật các biến tổng hợp
+    TripleONOFF();
+    
+    // Hiển thị tất cả thiết bị ở trạng thái TẮT
+    printAtPositions(MiddleHallway, 7, "⚪");
+    printAtPositions(LeftHallway, 5, "⚪");
+    printAtPositions(RightHallway, 5, "⚪");
+    
+    printColorAtPosition(LivingRoomacPos, 1, "AC", 7);
+    printColorAtPosition(livingRoomLightPos, 1, "Light", 7);
+    printColorAtPosition(LivingroomTVPos, 1, "TV", 7);
+    printColorAtPosition(kitchenLightPos, 1, "Light", 7);
+    printColorAtPosition(kitchenVentPos, 1, "CH", 7);
+    printColorAtPosition(BedroomLightPos, 1, "Light", 7);
+    printColorAtPosition(BedRoomACPos, 1, "AC", 7);
+    printColorAtPosition(GarageLightPos, 1, "Light", 7);
+    printColorAtPosition(garageVentPos, 1, "CH", 7);
+    printColorAtPosition(bathroomWaterPos, 1, "Water", 7);
+    printColorAtPosition(bathroomLightPos, 1, "Light", 7);
+    printColorAtPosition(bathroomVentPos, 1, "CH", 7);
+    printColorAtPosition(storageLightPos, 1, "Light", 7);
+    printColorAtPosition(storageVentPos, 1, "CH", 7);
+
+    systemPowerOn = 0;
+    // Hiển thị thông báo và menu khôi phục
+    clearMenu();
+    gotoxy(0, 24);
+    printf("⚠️  ALL POWER CUT OFF! ⚠️");
+    printf("\nAll devices have been turned off.");
+    printf("\n\n[1]: Restore Power");
+    printf("\n[ESC]: Continue with power off");
+    
+    // Chờ người dùng chọn
+    char choice;
+    while(1){
+        if(kbhit()){
+            choice = getch();
+            if(choice == '1'){
+                restorePreviousState();
+                break;
+            }else if(choice == 27){ // ESC
+                powerCutOffActive = 1;
+                clearMenu();
+                break;
+            }
+        }
+        Sleep(110);
     }
 }
 
@@ -371,6 +586,7 @@ int main(){
                 printf("[1]: Manual Mode");
                 printf("\n[2]: Automatic Mode");
                 printf("\n[ESC]: Exit");
+                printf("\n\n[4]: ?????");
             }
             
             else if(mode == 1){
@@ -381,8 +597,8 @@ int main(){
             }else if(mode == 11){
                 gotoxy(0,24);
                 printf("[1]: Turn %s all lights  ", lightsOn ? "off" : "on");
-                printf("\n[2]: Turn %s middle lights  ", middleLightsOn ? "off" : "on");
-                printf("\n[3]: Turn %s left lights  ", leftLightsOn ? "off" : "on");
+                printf("\n[2]: Turn %s middle lights  ", leftLightsOn ? "off" : "on");
+                printf("\n[3]: Turn %s left lights  ", middleLightsOn ? "off" : "on");
                 printf("\n[4]: Turn %s right lights  ", rightLightsOn ? "off" : "on");
                 printf("\n\n[0]: Go back");
             }else if(mode == 12){
@@ -446,6 +662,7 @@ int main(){
                 printf("Lights turn on at 18:00, off at 6:00\n");
                 printf("Current hour: %02dh\n", hour);
                 printf("\n[0]: Back to main menu");
+                
                 //Hallway
                 if(hour >= 18 || hour < 6){
                     if(!lightsOn){
@@ -487,6 +704,9 @@ int main(){
                 if (mode == 0){
                     if(input == '1') mode = 1;
                     if(input == '2') mode = 2;
+                    if(input == '4'){
+                        cutOffAllPower();
+                    }
                 }
                 else if(mode == 1){
                     if(input == '0') mode = 0;   //Ấn 0
