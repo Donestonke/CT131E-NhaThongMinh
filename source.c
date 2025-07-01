@@ -423,7 +423,7 @@ if(powerCutOffActive) {
         gotoxy(0, 24);
         printf("Bro really try to cut off power again 🙏💔");
         printf("\nYou are insane dude");
-        Sleep(4000);
+        Sleep(3000);
         FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
         printf("\n\n[1]: Restore Previous State");
         printf("\n[ESC]: Continue with power off");
@@ -587,6 +587,10 @@ int main(){
                 printf("\n[2]: Automatic Mode");
                 printf("\n[ESC]: Exit");
                 printf("\n\n[4]: HETCUU");
+                if(powerCutOffActive){
+                    gotoxy(0,29);
+                    printf("[5]: Restore power");
+                }
             }
             
             else if(mode == 1){
@@ -651,8 +655,28 @@ int main(){
                 printf("\n[3]: Turn %s all device  ", StorageDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }
-
             else if(mode == 2){
+                if(powerCutOffActive) {
+                    clearMenu();
+                    gotoxy(0, 24);
+                    printf("⚠️  SYSTEM POWER IS OFF!");
+                    printf("\nRestore power first to use.");
+                    printf("\n\n[0]: Back to main menu");
+                    // Đợi người dùng bấm phím 0 để quay lại menu chính
+                    char ch;
+                    while(1){
+                        if(kbhit()){
+                            ch = getch();
+                            if(ch == '0' || ch == 27) { // 0 hoặc ESC đều quay lại menu chính
+                                mode = 0;
+                                break;
+                            }
+                        }
+                        Sleep(10);
+                    }
+                    clearMenu();
+                    continue;
+                }
                 // Lấy thời gian hiện tại
                 time_t now = time(NULL);
                 struct tm *local = localtime(&now);
@@ -676,7 +700,7 @@ int main(){
                         }
                         if(!rightLightsOn){
                             rightLightsOn = 1;
-                            clearAtPositions(RightHallway, 5, "��");
+                            clearAtPositions(RightHallway, 5, "🟡");
                         }
                     } else {
                         if(leftLightsOn){
@@ -787,6 +811,9 @@ int main(){
                     if(input == '2') mode = 2;
                     if(input == '4'){
                         cutOffAllPower();
+                    }
+                    if(powerCutOffActive){
+                    if(input == '5') restorePreviousState();
                     }
                 }
                 else if(mode == 1){
