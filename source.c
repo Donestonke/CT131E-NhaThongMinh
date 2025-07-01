@@ -68,7 +68,7 @@ int savedBathroomLightOn, savedBathroomVentOn, savedBathroomWaterOn;
 int savedStorageLightOn, savedStorageVentOn;
  
 //Hallway
-int MiddleHallway [][2] = { {10,11}, {19,11}, {29,11}, {39,11}, {49,11}, {59,11}, {69,11} };
+int MiddleHallway [][2] = { {10,11}, {20,11}, {30,11}, {40,11}, {50,11}, {60,11}, {70,11} };
 int LeftHallway [][2] = { {0,3}, {0,7}, {0,11}, {0,15}, {0,19} };
 int RightHallway [][2] = { {79,3}, {79,7}, {79,11}, {79,15}, {79,19} };
 
@@ -586,7 +586,7 @@ int main(){
                 printf("[1]: Manual Mode");
                 printf("\n[2]: Automatic Mode");
                 printf("\n[ESC]: Exit");
-                printf("\n\n[4]: ?????");
+                printf("\n\n[4]: HETCUU");
             }
             
             else if(mode == 1){
@@ -657,44 +657,125 @@ int main(){
                 time_t now = time(NULL);
                 struct tm *local = localtime(&now);
                 int hour = local->tm_hour;
+                int minute = local->tm_min;
+                int currentTime = hour * 100 + minute; 
 
                 gotoxy(0,24);
-                printf("Lights turn on at 18:00, off at 6:00\n");
-                printf("Current hour: %02dh\n", hour);
-                printf("\n[0]: Back to main menu");
-                
-                //Hallway
-                if(hour >= 18 || hour < 6){
-                    if(!lightsOn){
-                        lightsOn = 1;
-                        clearAtPositions(MiddleHallway, 7, "🟡");
-                        clearAtPositions(LeftHallway, 5, "🟡");
-                        clearAtPositions(RightHallway, 5, "🟡");
-                    }else if(!middleLightsOn){
-                        middleLightsOn = 1;
-                        clearAtPositions(MiddleHallway, 7, "🟡");
-                    }else if(leftLightsOn){
-                        clearAtPositions(LeftHallway, 5, "🟡");
-                    }else if(rightLightsOn){
-                        clearAtPositions(RightHallway, 5, "🟡");
+                printf("Automatic Mode - Device Schedules:");printf("\nHallway Left/Right: 18:30-05:30");
+                printf("\nHallway Middle: 17:30-23:30");
+                printf("\nAC: 21:30-06:00");
+                printf("\nRoom Lights: 18:00-06:00");
+                printf("\nCurrent time: %02d:%02d", hour, minute);
+                printf("\n\n[0]: Back to main menu");
+    
+                // Hallway Left/Right Lights: 18:30 - 05:30
+                if((currentTime >= 1830) || (currentTime < 530)){
+                    if(!leftLightsOn){
+                        leftLightsOn = 1;
+                         clearAtPositions(LeftHallway, 5, "🟡");
+                        }
+                        if(!rightLightsOn){
+                            rightLightsOn = 1;
+                            clearAtPositions(RightHallway, 5, "��");
+                        }
+                    } else {
+                        if(leftLightsOn){
+                            leftLightsOn = 0;
+                            printAtPositions(LeftHallway, 5, "⚪");
+                        }
+                        if(rightLightsOn){
+                            rightLightsOn = 0;
+                            printAtPositions(RightHallway, 5, "⚪");
+                        }
                     }
-                }else if(lightsOn){
-                        lightsOn = 0;
-                        printAtPositions(MiddleHallway, 7, "⚪");
-                        printAtPositions(LeftHallway, 5, "⚪");
-                        printAtPositions(RightHallway, 5, "⚪");
-                }else if(middleLightsOn){
-                    middleLightsOn = 0;
-                    printAtPositions(MiddleHallway, 7, "⚪");
-                }else if(leftLightsOn){
-                    leftLightsOn = 0;
-                    printAtPositions(LeftHallway, 5, "⚪");
-                }else if(rightLightsOn){
-                    rightLightsOn = 0;
-                    printAtPositions(RightHallway, 5, "⚪");
+    
+                    // Hallway Middle Lights: 17:30 - 23:30
+                    if((currentTime >= 1730) && (currentTime < 2330)){
+                        if(!middleLightsOn){
+                            middleLightsOn = 1;
+                            clearAtPositions(MiddleHallway, 7, "🟡");
+                        }
+                    } else {
+                        if(middleLightsOn){
+                            middleLightsOn = 0;
+                            printAtPositions(MiddleHallway, 7, "⚪");
+                        }
+                    }
+    
+                    // AC (Living Room & Bedroom): 21:30 - 06:00
+                    if((currentTime >= 2130) || (currentTime < 600)){
+                        if(!livingRoomACOn){
+                            livingRoomACOn = 1;
+                            printColorAtPosition(LivingRoomacPos, 1, "AC", 11);
+                        }
+                        if(!bedroomACon){
+                            bedroomACon = 1;
+                            printColorAtPosition(BedRoomACPos, 1, "AC", 11);
+                        }
+                    } else {
+                        if(livingRoomACOn){
+                            livingRoomACOn = 0;
+                            printColorAtPosition(LivingRoomacPos, 1, "AC", 7);
+                        }
+                        if(bedroomACon){
+                            bedroomACon = 0;
+                            printColorAtPosition(BedRoomACPos, 1, "AC", 7);
+                        }
+                    }
+                    
+                    // Room Lights: 18:00 - 06:00 (Living Room, Kitchen, Garage, Bedroom, Bathroom, Storage)
+                     if((currentTime >= 1800) || (currentTime < 600)){
+                        if(!livingRoomLightOn){
+                            livingRoomLightOn = 1;
+                            printColorAtPosition(livingRoomLightPos, 1, "Light", 14);
+                        }
+                        if(!kitchenLightOn){
+                            kitchenLightOn = 1;
+                            printColorAtPosition(kitchenLightPos, 1, "Light", 14);
+                        }
+                        if(!garageLightOn){
+                            garageLightOn = 1;
+                            printColorAtPosition(GarageLightPos, 1, "Light", 14);
+                        }
+                        if(!bedroomLightOn){
+                            bedroomLightOn = 1;
+                            printColorAtPosition(BedroomLightPos, 1, "Light", 14);
+                        }
+                        if(!bathroomLightOn){
+                            bathroomLightOn = 1;
+                            printColorAtPosition(bathroomLightPos, 1, "Light", 14);
+                        }
+                        if(!storageLightOn){
+                            storageLightOn = 1;
+                            printColorAtPosition(storageLightPos, 1, "Light", 14);
+                        }
+                    } else {
+                        if(livingRoomLightOn){
+                            livingRoomLightOn = 0;
+                            printColorAtPosition(livingRoomLightPos, 1, "Light", 7);
+                        }
+                        if(kitchenLightOn){
+                            kitchenLightOn = 0;
+                            printColorAtPosition(kitchenLightPos, 1, "Light", 7);
+                        }
+                        if(garageLightOn){
+                            garageLightOn = 0;
+                            printColorAtPosition(GarageLightPos, 1, "Light", 7);
+                        }
+                        if(bedroomLightOn){
+                            bedroomLightOn = 0;
+                            printColorAtPosition(BedroomLightPos, 1, "Light", 7);
+                        }
+                        if(bathroomLightOn){
+                            bathroomLightOn = 0;
+                            printColorAtPosition(bathroomLightPos, 1, "Light", 7);
+                        }
+                        if(storageLightOn){
+                            storageLightOn = 0;
+                            printColorAtPosition(storageLightPos, 1, "Light", 7);
+                        }
+                    } TripleONOFF();
                 }
-            }
-
             if(kbhit()) {
                 input = getch();
                 if(input == 27) { // ESC key
