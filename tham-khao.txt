@@ -1,0 +1,8 @@
+NGUỒN THAM KHẢO
+
+Đọc nội dung file txt: https://www.youtube.com/watch?v=fLPqn026DaE
+
+Hàm gotoxy: https://www.youtube.com/watch?v=FX8IyvHwWfc
+
+cách dùng typedef( gọi biến kiểu khác): https://stackoverflow.com/questions/71270954/how-to-properly-use-typedef-for-structs-in-c
+
