@@ -125,6 +125,41 @@ int GarageLightPos[][2]   = { {17,2} };
 int storageVentPos[][2]     = { {70,14} };
 int storageLightPos[][2]     = { {60,14} };  
 
+typedef struct{
+    int* state;
+    int (*position)[2];
+    int count;
+    const char* name;
+    int colorON;
+    int colorOFF;
+} Device;
+
+void updateDeviceStatus(Device* device){
+    int color = *(device->state) ? device->colorON : device->colorOFF;
+    printColorAtPosition(device->position, device->count, device->name, color);
+}
+
+// Khai báo các thiết bị
+Device livingRoomLight = {&livingroom.lightsOn, livingRoomLightPos, 1, "Light", 14, 7};
+Device livingRoomTV = {&livingroom.TVOn, LivingroomTVPos, 1, "TV", 10, 7};
+Device livingRoomAC = {&livingroom.AcOn, LivingRoomacPos, 1, "AC", 11, 7};
+
+Device kitchenLight = {&kitchen.LightOn, kitchenLightPos, 1, "Light", 14, 7};
+Device kitchenVent = {&kitchen.VentOn, kitchenVentPos, 1, "CH", 5, 7};
+
+Device bedroomLight = {&bedroom.LightOn, BedroomLightPos, 1, "Light", 14, 7};
+Device bedroomAC = {&bedroom.ACOn, BedRoomACPos, 1, "AC", 11, 7};
+
+Device garageLight = {&garage.LightOn, GarageLightPos, 1, "Light", 14, 7};
+Device garageVent = {&garage.VentOn, garageVentPos, 1, "CH", 5, 7};
+
+Device bathroomLight = {&bathroom.LightOn, bathroomLightPos, 1, "Light", 14, 7};
+Device bathroomVent = {&bathroom.VentOn, bathroomVentPos, 1, "CH", 5, 7};
+Device bathroomWater = {&bathroom.WaterOn, bathroomWaterPos, 1, "Water", 9, 7};
+
+Device storageLight = {&storage.LightOn, storageLightPos, 1, "Light", 14, 7};
+Device storageVent = {&storage.VentOn, storageVentPos, 1, "CH", 5, 7};
+
 void TripleONOFF(){
     hallway.lightsOn = (hallway.middleLightsOn && hallway.rightLightsOn && hallway.leftLightsOn) ? 1 : 0;
     livingroom.devicesOn = (livingroom.AcOn && livingroom.lightsOn && livingroom.TVOn) ? 1 : 0;
@@ -193,202 +228,128 @@ void toggleAllLights() {
 void toggleLivingRoomLight(){
     if(IfPowerOff()) return;
     livingroom.lightsOn = !livingroom.lightsOn;
-    if(livingroom.lightsOn){
-        printColorAtPosition(livingRoomLightPos, 1, "Light", 14); // Bật - màu vàng
-    } else {
-        printColorAtPosition(livingRoomLightPos, 1, "Light", 7); // Tắt - màu trắng
-    } TripleONOFF();
+    updateDeviceStatus(&livingRoomLight);
+    TripleONOFF();
 }
 void toggleLivingRoomTV(){
     if(IfPowerOff()) return;
     livingroom.TVOn = !livingroom.TVOn;
-    if(livingroom.TVOn){
-        printColorAtPosition(LivingroomTVPos, 1, "TV", 10);
-    }else{
-        printColorAtPosition(LivingroomTVPos, 1, "TV", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&livingRoomTV);
+    TripleONOFF();
 }
 void toggleLivingRoomAC(){
     if(IfPowerOff()) return;
     livingroom.AcOn = !livingroom.AcOn;
-    if(livingroom.AcOn){
-        printColorAtPosition(LivingRoomacPos, 1, "AC", 11);
-    }else{
-        printColorAtPosition(LivingRoomacPos, 1, "AC", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&livingRoomAC);
+    TripleONOFF();
 }
 void toggleLivingRoomDevices(){
     if(IfPowerOff()) return;
-    if(livingroom.devicesOn){
-        printColorAtPosition(LivingRoomacPos, 1, "AC", 11);
-        printColorAtPosition(livingRoomLightPos, 1, "Light", 14);
-        printColorAtPosition(LivingroomTVPos, 1, "TV", 10);
-    }else{
-        printColorAtPosition(LivingRoomacPos, 1, "AC", 7);
-        printColorAtPosition(livingRoomLightPos, 1, "Light", 7);
-        printColorAtPosition(LivingroomTVPos, 1, "TV", 7);      
-    }
+    updateDeviceStatus(&livingRoomLight);
+    updateDeviceStatus(&livingRoomTV);
+    updateDeviceStatus(&livingRoomAC);
 }
 
 //Toggle function for kitchen
 void toggleKitchenLight(){
     if(IfPowerOff()) return;
     kitchen.LightOn = !kitchen.LightOn;
-    if(kitchen.LightOn){
-        printColorAtPosition(kitchenLightPos, 1, "Light", 14);
-    }else{
-        printColorAtPosition(kitchenLightPos, 1, "Light", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&kitchenLight);
+    TripleONOFF();
 }
 void toggleKitchenVent(){
     if(IfPowerOff()) return;
     kitchen.VentOn = !kitchen.VentOn;
-    if(kitchen.VentOn){
-        printColorAtPosition(kitchenVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(kitchenVentPos, 1, "CH", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&kitchenVent);
+    TripleONOFF();
 }
 void toggleKitchenDevices(){
     if(IfPowerOff()) return;
-    if(kitchen.DevicesOn){
-        printColorAtPosition(kitchenLightPos, 1, "Light", 14);
-        printColorAtPosition(kitchenVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(kitchenLightPos, 1, "Light", 7);
-        printColorAtPosition(kitchenVentPos, 1, "CH", 7);      
-    }
+    updateDeviceStatus(&kitchenLight);
+    updateDeviceStatus(&kitchenVent);
 }
 
 //Toggle function for bedroom
 void toggleBedroomLight(){
     if(IfPowerOff()) return;
     bedroom.LightOn = !bedroom.LightOn;
-    if(bedroom.LightOn){
-        printColorAtPosition(BedroomLightPos, 1, "Light", 14);
-    }else{
-        printColorAtPosition(BedroomLightPos, 1, "Light", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&bedroomLight);
+    TripleONOFF();
 }
 void toggleBedroomAC(){
     if(IfPowerOff()) return;
     bedroom.ACOn = !bedroom.ACOn;
-    if(bedroom.ACOn){
-        printColorAtPosition(BedRoomACPos, 1, "AC", 11);
-    }else{
-        printColorAtPosition(BedRoomACPos, 1, "AC", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&bedroomAC);
+    TripleONOFF();
 }
 void toggleBedroomDevices(){
     if(IfPowerOff()) return;
-    if(bedroom.DevicesOn){
-        printColorAtPosition(BedroomLightPos, 1, "Light", 14);
-        printColorAtPosition(BedRoomACPos, 1, "AC", 11);
-    }else{
-        printColorAtPosition(BedroomLightPos, 1, "Light", 7);
-        printColorAtPosition(BedRoomACPos, 1, "AC", 7);      
-    }
+    updateDeviceStatus(&bedroomLight);
+    updateDeviceStatus(&bedroomAC);
 }
 
 //Toggle function for Garage
 void toggleGarageLight(){
     if(IfPowerOff()) return;
     garage.LightOn = !garage.LightOn;
-    if(garage.LightOn){
-        printColorAtPosition(GarageLightPos, 1, "Light", 14);
-    }else{
-        printColorAtPosition(GarageLightPos, 1, "Light", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&garageLight);
+    TripleONOFF();
 }
 void toggleGarageVent(){
     if(IfPowerOff()) return;
     garage.VentOn = !garage.VentOn;
-    if(garage.VentOn){
-        printColorAtPosition(garageVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(garageVentPos, 1, "CH", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&garageVent);
+    TripleONOFF();
 }
 void toggleGarageDevices(){
     if(IfPowerOff()) return;
-    if(garage.DevicesOn){
-        printColorAtPosition(GarageLightPos, 1, "Light", 14);
-        printColorAtPosition(garageVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(GarageLightPos, 1, "Light", 7);
-        printColorAtPosition(garageVentPos, 1, "CH", 7);      
-    }
+    updateDeviceStatus(&garageLight);
+    updateDeviceStatus(&garageVent);
 }
 
 //Toggle function for Bathroom
 void toggleBathroomLight(){
     if(IfPowerOff()) return;
     bathroom.LightOn = !bathroom.LightOn;
-    if(bathroom.LightOn){
-        printColorAtPosition(bathroomLightPos, 1, "Light", 14); 
-    } else {
-        printColorAtPosition(bathroomLightPos, 1, "Light", 7); 
-    } TripleONOFF();
+    updateDeviceStatus(&bathroomLight);
+    TripleONOFF();
 }
 void toggleBathroomCH(){
     if(IfPowerOff()) return;
     bathroom.VentOn = !bathroom.VentOn;
-    if(bathroom.VentOn){
-        printColorAtPosition(bathroomVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(bathroomVentPos, 1, "CH", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&bathroomVent);
+    TripleONOFF();
 }
 void toggleBathroomWater(){
     if(IfPowerOff()) return;
     bathroom.WaterOn = !bathroom.WaterOn;
-    if(bathroom.WaterOn){
-        printColorAtPosition(bathroomWaterPos, 1, "Water", 9);
-    }else{
-        printColorAtPosition(bathroomWaterPos, 1, "Water", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&bathroomWater);
+    TripleONOFF();
 }
 void toggleBathroomDevices(){
     if(IfPowerOff()) return;
-    if(bathroom.DevicesOn){
-        printColorAtPosition(bathroomWaterPos, 1, "Water", 9);
-        printColorAtPosition(bathroomLightPos, 1, "Light", 14);
-        printColorAtPosition(bathroomVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(bathroomWaterPos, 1, "Water", 7);
-        printColorAtPosition(bathroomLightPos, 1, "Light", 7);
-        printColorAtPosition(bathroomVentPos, 1, "CH", 7);      
-    }
+    updateDeviceStatus(&bathroomLight);
+    updateDeviceStatus(&bathroomVent);
+    updateDeviceStatus(&bathroomWater);
 }
 
 //Toggle function for Storage
 void toggleStorageLight(){
     if(IfPowerOff()) return;
     storage.LightOn = !storage.LightOn;
-    if(storage.LightOn){
-        printColorAtPosition(storageLightPos, 1, "Light", 14);
-    }else{
-        printColorAtPosition(storageLightPos, 1, "Light", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&storageLight);
+    TripleONOFF();
 }
 void toggleStorageVent(){
     if(IfPowerOff()) return;
     storage.VentOn = !storage.VentOn;
-    if(storage.VentOn){
-        printColorAtPosition(storageVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(storageVentPos, 1, "CH", 7);
-    } TripleONOFF();
+    updateDeviceStatus(&storageVent);
+    TripleONOFF();
 }
 void toggleStorageDevices(){
     if(IfPowerOff()) return;
-    if(storage.DevicesOn){
-        printColorAtPosition(storageLightPos, 1, "Light", 14);
-        printColorAtPosition(storageVentPos, 1, "CH", 5);
-    }else{
-        printColorAtPosition(storageLightPos, 1, "Light", 7);
-        printColorAtPosition(storageVentPos, 1, "CH", 7);      
-    }
+    updateDeviceStatus(&storageLight);
+    updateDeviceStatus(&storageVent);
 }
 
 void restorePreviousState(){
@@ -416,20 +377,21 @@ void restorePreviousState(){
     }
     
     // Hiển thị từng thiết bị theo trạng thái đã lưu
-    printColorAtPosition(LivingRoomacPos, 1, "AC", savedlivingroom.AcOn ? 11 : 7);
-    printColorAtPosition(livingRoomLightPos, 1, "Light", savedlivingroom.lightsOn ? 14 : 7);
-    printColorAtPosition(LivingroomTVPos, 1, "TV", savedlivingroom.TVOn ? 10 : 7);
-    printColorAtPosition(kitchenLightPos, 1, "Light", savedkitchen.LightOn ? 14 : 7);
-    printColorAtPosition(kitchenVentPos, 1, "CH", savedkitchen.VentOn ? 5 : 7);
-    printColorAtPosition(BedroomLightPos, 1, "Light", savedbedroom.LightOn ? 14 : 7);
-    printColorAtPosition(BedRoomACPos, 1, "AC", savedbedroom.ACOn ? 11 : 7);
-    printColorAtPosition(GarageLightPos, 1, "Light", savedgarage.LightOn ? 14 : 7);
-    printColorAtPosition(garageVentPos, 1, "CH", savedgarage.VentOn ? 5 : 7);
-    printColorAtPosition(bathroomWaterPos, 1, "Water", savedbathroom.WaterOn ? 9 : 7);
-    printColorAtPosition(bathroomLightPos, 1, "Light", savedbathroom.LightOn ? 14 : 7);
-    printColorAtPosition(bathroomVentPos, 1, "CH", savedbathroom.VentOn ? 5 : 7);
-    printColorAtPosition(storageLightPos, 1, "Light", savedstorage.LightOn ? 14 : 7);
-    printColorAtPosition(storageVentPos, 1, "CH", savedstorage.VentOn ? 5 : 7);
+    updateDeviceStatus(&livingRoomLight);
+    updateDeviceStatus(&livingRoomTV);
+    updateDeviceStatus(&livingRoomAC);
+    updateDeviceStatus(&kitchenLight);
+    updateDeviceStatus(&kitchenVent);
+    updateDeviceStatus(&bedroomLight);
+    updateDeviceStatus(&bedroomAC);
+    updateDeviceStatus(&garageLight);
+    updateDeviceStatus(&garageVent);
+    updateDeviceStatus(&bathroomLight);
+    updateDeviceStatus(&bathroomVent);
+    updateDeviceStatus(&bathroomWater);
+    updateDeviceStatus(&storageLight);
+    updateDeviceStatus(&storageVent);
+    
 
     systemPowerOn = 1;
     powerCutOffActive = 0;
@@ -607,7 +569,7 @@ int main(){
                 gotoxy(0,24);
                 printf("[1]: Hallway");
                 printf("\n[2]: Rooms");
-                printf("\n[0]: Back to main menu");
+                printf("\n\n[0]: Back to main menu");
             }else if(mode == 11){
                 gotoxy(0,24);
                 printf("[1]: Turn %s all lights  ", hallway.lightsOn ? "off" : "on");
