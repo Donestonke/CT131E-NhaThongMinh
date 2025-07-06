@@ -354,13 +354,7 @@ void toggleStorageDevices(){
 
 void restorePreviousState(){
     // Khôi phục trạng thái trước khi cúp điện
-    hallway = savedhallway;
-    livingroom = savedlivingroom;
-    kitchen = savedkitchen;
-    bedroom = savedbedroom;
-    garage = savedgarage;
-    bathroom = savedbathroom;
-    storage = savedstorage;
+    house = savedhouse;
     
     // Cập nhật các biến tổng hợp
     TripleONOFF();
@@ -508,6 +502,9 @@ int main(){
     //Xóa màn hình
     system("cls");
     char input;
+
+    home.systemPowerOn = 1; // Bật nguồn hệ thống
+    home.powerCutOffActive = 0; // Chưa cúp điện
 
     //Đọc file txt
     FILE *fh;
