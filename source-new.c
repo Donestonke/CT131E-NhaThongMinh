@@ -35,7 +35,7 @@ void clearMenu(){
     }
 }
 
-void printColorAtPosition(int position[][2], int count, const char* text, int color){
+void printColorAtPosition(int position[0][2], int count, const char* text, int color){
     HANDLE hconsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hconsole, color);
     for(int i = 0; i < count; i++){
@@ -51,25 +51,25 @@ typedef struct {
     int hallwayLightsOn, hallwayMiddleLightsOn, hallwayLeftLightsOn, hallwayRightLightsOn;
     
     // Living Room
-    int livingRoomLightsOn, livingRoomAcOn, livingRoomTVOn, livingRoomDevicesOn;
+    int livingRoomLightsOn, livingRoomAcOn, livingRoomTVOn;
     
     // Kitchen
-    int kitchenLightOn, kitchenVentOn, kitchenDevicesOn;
+    int kitchenLightOn, kitchenVentOn;
     
     // Bedroom
-    int bedroomLightOn, bedroomAcOn, bedroomDevicesOn;
+    int bedroomLightOn, bedroomAcOn;
     
     // Garage
-    int garageLightOn, garageVentOn, garageDevicesOn;
+    int garageLightOn, garageVentOn; 
     
     // Bathroom
-    int bathroomLightOn, bathroomVentOn, bathroomWaterOn, bathroomDevicesOn;
+    int bathroomLightOn, bathroomVentOn, bathroomWaterOn;
     
     // Storage
-    int storageLightOn, storageVentOn, storageDevicesOn;
+    int storageLightOn, storageVentOn;
     
     // System
-    int systemPowerOn, powerCutOffActive, totalDevices;
+    int systemPowerOn, powerCutOffActive, totalDevices, AllRoomLights, AllRoomAC;
 } SmartHomeState;
 
 SmartHomeState home = {0}; // Khởi tạo tất cả = 0
@@ -137,14 +137,9 @@ Device storageLight = {&home.storageLightOn, storageLightPos, 1, "Light", 14, 7}
 Device storageVent = {&home.storageVentOn, storageVentPos, 1, "CH", 5, 7};
 
 void TripleONOFF(){
-    home.hallwayLightsOn = (home.hallwayMiddleLightsOn && home.hallwayRightLightsOn && home.hallwayLeftLightsOn) ? 1 : 0;
-    home.livingRoomDevicesOn = (home.livingRoomAcOn && home.livingRoomLightsOn && home.livingRoomTVOn) ? 1 : 0;
-    home.kitchenDevicesOn = (home.kitchenLightOn && home.kitchenVentOn) ? 1 : 0;
-    home.bedroomDevicesOn = (home.bedroomAcOn && home.bedroomLightOn) ? 1 : 0;
-    home.storageDevicesOn = (home.storageLightOn && home.storageVentOn) ? 1 : 0;
-    home.bathroomDevicesOn = (home.bathroomLightOn && home.bathroomVentOn && home.bathroomWaterOn) ? 1 : 0;
-    home.garageDevicesOn = (home.garageLightOn && home.garageVentOn) ? 1 : 0;
+    home.AllRoomLights = (home.livingRoomLightsOn && home.kitchenLightOn && home.bedroomLightOn && home.storageLightOn && home.garageLightOn && home.bathroomLightOn)? 1 : 0;
     home.totalDevices = (home.hallwayMiddleLightsOn && home.hallwayRightLightsOn && home.hallwayLeftLightsOn && home.livingRoomAcOn && home.livingRoomLightsOn && home.livingRoomTVOn && home.kitchenLightOn && home.kitchenVentOn && home.bedroomAcOn && home.bedroomLightOn && home.storageLightOn && home.storageVentOn && home.bathroomLightOn && home.bathroomVentOn && home.bathroomWaterOn && home.garageLightOn && home.garageVentOn)? 1 : 0;
+    home.AllRoomAC = (home.bedroomAcOn && home.livingRoomAcOn)? 1 : 0;
 }
 
 int IfPowerOff(){
@@ -219,12 +214,6 @@ void toggleLivingRoomAC(){
     updateDeviceStatus(&livingRoomAC);
     TripleONOFF();
 }
-void toggleLivingRoomDevices(){
-    if(IfPowerOff()) return;
-    updateDeviceStatus(&livingRoomLight);
-    updateDeviceStatus(&livingRoomTV);
-    updateDeviceStatus(&livingRoomAC);
-}
 
 //Toggle function for kitchen
 void toggleKitchenLight(){
@@ -238,11 +227,6 @@ void toggleKitchenVent(){
     home.kitchenVentOn = !home.kitchenVentOn;
     updateDeviceStatus(&kitchenVent);
     TripleONOFF();
-}
-void toggleKitchenDevices(){
-    if(IfPowerOff()) return;
-    updateDeviceStatus(&kitchenLight);
-    updateDeviceStatus(&kitchenVent);
 }
 
 //Toggle function for bedroom
@@ -258,11 +242,6 @@ void toggleBedroomAC(){
     updateDeviceStatus(&bedroomAC);
     TripleONOFF();
 }
-void toggleBedroomDevices(){
-    if(IfPowerOff()) return;
-    updateDeviceStatus(&bedroomLight);
-    updateDeviceStatus(&bedroomAC);
-}
 
 //Toggle function for Garage
 void toggleGarageLight(){
@@ -276,11 +255,6 @@ void toggleGarageVent(){
     home.garageVentOn = !home.garageVentOn;
     updateDeviceStatus(&garageVent);
     TripleONOFF();
-}
-void toggleGarageDevices(){
-    if(IfPowerOff()) return;
-    updateDeviceStatus(&garageLight);
-    updateDeviceStatus(&garageVent);
 }
 
 //Toggle function for Bathroom
@@ -302,12 +276,6 @@ void toggleBathroomWater(){
     updateDeviceStatus(&bathroomWater);
     TripleONOFF();
 }
-void toggleBathroomDevices(){
-    if(IfPowerOff()) return;
-    updateDeviceStatus(&bathroomLight);
-    updateDeviceStatus(&bathroomVent);
-    updateDeviceStatus(&bathroomWater);
-}
 
 //Toggle function for Storage
 void toggleStorageLight(){
@@ -322,10 +290,21 @@ void toggleStorageVent(){
     updateDeviceStatus(&storageVent);
     TripleONOFF();
 }
-void toggleStorageDevices(){
+
+//Toggle function for Lights and AC
+void toggleAllRoomLights(){
     if(IfPowerOff()) return;
+    updateDeviceStatus(&livingRoomLight);
+    updateDeviceStatus(&bedroomLight);
+    updateDeviceStatus(&kitchenLight);
+    updateDeviceStatus(&garageLight);
+    updateDeviceStatus(&bathroomLight);
     updateDeviceStatus(&storageLight);
-    updateDeviceStatus(&storageVent);
+}
+void toggleAllAC(){
+    if(IfPowerOff()) return;
+    updateDeviceStatus(&livingRoomAC);
+    updateDeviceStatus(&bedroomAC);
 }
 
 void restorePreviousState(){
@@ -405,12 +384,12 @@ if(home.powerCutOffActive) {
     
     // Tắt tất cả thiết bị
     home.hallwayLightsOn = home.hallwayMiddleLightsOn = home.hallwayLeftLightsOn = home.hallwayRightLightsOn = 0;
-    home.livingRoomLightsOn = home.livingRoomAcOn = home.livingRoomTVOn = home.livingRoomDevicesOn = 0;
-    home.kitchenLightOn = home.kitchenVentOn = home.kitchenDevicesOn = 0;
-    home.bedroomLightOn = home.bedroomAcOn = home.bedroomDevicesOn = 0;
-    home.garageLightOn = home.garageVentOn = home.garageDevicesOn = 0;
-    home.bathroomLightOn = home.bathroomVentOn = home.bathroomWaterOn = home.bathroomDevicesOn = 0;
-    home.storageLightOn = home.storageVentOn = home.storageDevicesOn = 0;
+    home.livingRoomLightsOn = home.livingRoomAcOn = home.livingRoomTVOn = 0;
+    home.kitchenLightOn = home.kitchenVentOn = 0;
+    home.bedroomLightOn = home.bedroomAcOn = 0;
+    home.garageLightOn = home.garageVentOn = 0;
+    home.bathroomLightOn = home.bathroomVentOn = home.bathroomWaterOn = 0;
+    home.storageLightOn = home.storageVentOn = 0;
     
     // Cập nhật các biến tổng hợp
     TripleONOFF();
@@ -473,7 +452,6 @@ int main(){
     system("cls");
     char input;
 
-    // ✅ Khởi tạo trạng thái hệ thống ban đầu
     home.systemPowerOn = 1; // Bật nguồn hệ thống
     home.powerCutOffActive = 0; // Chưa cúp điện
 
@@ -554,31 +532,31 @@ int main(){
                 printf("[5]: Bathroom\n");
                 printf("[6]: Storage\n");
                 printf("\n[0]: Go back");
+                gotoxy(40,24);
+                printf("[7]: Turn %s all lights", home.AllRoomLights ? "off" : "on");
+                gotoxy(40,25);
+                printf("[8]: Turn %s all AC", home.AllRoomAC ? "off" : "on");
             }else if(mode == 121){
                 gotoxy(0,24);
                 printf("[1]: Turn %s light  ", home.livingRoomLightsOn ? "off" : "on");
                 printf("\n[2]: Turn %s TV ", home.livingRoomTVOn ? "off" : "on");
                 printf("\n[3]: Turn %s AC ", home.livingRoomAcOn ? "off" : "on");
-                printf("\n[4]: Turn %s all device ", home.livingRoomDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }else if(mode == 122){
                 gotoxy(0,24);
                 printf("[1]: Turn %s light  ", home.kitchenLightOn ? "off" : "on");
                 printf("\n[2]: Turn %s vent ", home.kitchenVentOn ? "off" : "on");
-                printf("\n[3]: Turn %s all devices", home.kitchenDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }else if(mode == 123){
                 gotoxy(0,24);
                 printf("[1]: Turn %s light ", home.garageLightOn ? "off" : "on");
                 printf("\n[2]: Turn %s Vent ", home.garageVentOn ? "off" : "on");
-                printf("\n[3]: Turn %s all device ", home.garageDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }
             else if(mode == 124){
                 gotoxy(0,24);
                 printf("[1]: Turn %s light  ", home.bedroomLightOn ? "off" : "on");
                 printf("\n[2]: Turn %s AC ", home.bedroomAcOn ? "off" : "on");
-                printf("\n[3]: Turn %s all device ", home.bedroomDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }
             else if(mode == 125){
@@ -586,13 +564,11 @@ int main(){
                 printf("[1]: Turn %s light  ", home.bathroomLightOn ? "off" : "on");
                 printf("\n[2]: Turn %s vent  ", home.bathroomVentOn ? "off" : "on");
                 printf("\n[3]: Turn %s water  ", home.bathroomWaterOn ? "off" : "on");
-                printf("\n[4]: Turn %s all device  ", home.bathroomDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }else if(mode == 126){
                 gotoxy(0,24);
                 printf("[1]: Turn %s light  ", home.storageLightOn ? "off" : "on");
                 printf("\n[2]: Turn %s vent  ", home.storageVentOn ? "off" : "on");
-                printf("\n[3]: Turn %s all device  ", home.storageDevicesOn ? "off" : "on");
                 printf("\n[0]: Go back");
             }
             else if(mode == 2){
@@ -782,25 +758,28 @@ int main(){
                     if(input == '4') mode = 124;
                     if(input == '5') mode = 125;
                     if(input == '6') mode = 126;
-                }else if(mode == 121){
-                    if(input == '4'){
-                        home.livingRoomDevicesOn = !home.livingRoomDevicesOn;
-                        home.livingRoomTVOn = home.livingRoomDevicesOn;
-                        home.livingRoomAcOn = home.livingRoomDevicesOn;
-                        home.livingRoomLightsOn = home.livingRoomDevicesOn;
-                        toggleLivingRoomDevices();
+                    if(input == '7'){
+                        home.AllRoomLights = !home.AllRoomLights;
+                        home.livingRoomLightsOn = home.AllRoomLights;
+                        home.kitchenLightOn = home.AllRoomLights;
+                        home.bedroomLightOn = home.AllRoomLights;
+                        home.storageLightOn = home.AllRoomLights;
+                        home.garageLightOn = home.AllRoomLights;
+                        home.bathroomLightOn = home.AllRoomLights;
+                        toggleAllRoomLights();
                     }
+                    if(input == '8'){
+                        home.AllRoomAC = !home.AllRoomAC;
+                        home.livingRoomAcOn = home.AllRoomAC;
+                        home.bedroomAcOn = home.AllRoomAC;
+                        toggleAllAC();
+                    }
+                }else if(mode == 121){
                     if(input == '0') mode = 12;
                     if(input == '1') toggleLivingRoomLight();
                     if(input == '2') toggleLivingRoomTV();
                     if(input == '3') toggleLivingRoomAC();
                 }else if(mode == 122){
-                    if(input == '3'){
-                        home.kitchenDevicesOn = !home.kitchenDevicesOn;
-                        home.kitchenLightOn = home.kitchenDevicesOn;
-                        home.kitchenVentOn = home.kitchenDevicesOn;
-                        toggleKitchenDevices();
-                    }
                     if(input == '0') mode = 12;
                     if(input == '1') toggleKitchenLight();
                     if(input == '2') toggleKitchenVent();
@@ -808,45 +787,20 @@ int main(){
                 else if(mode == 123){
                     if(input == '1') toggleGarageLight();
                     if(input == '2') toggleGarageVent();
-                    if(input == '3'){
-                        home.garageDevicesOn = !home.garageDevicesOn;
-                        home.garageLightOn = home.garageDevicesOn;
-                        home.garageVentOn = home.garageDevicesOn;
-                        toggleGarageDevices();
-                    }
                     if(input == '0') mode = 12;
                 }
                 else if(mode == 124){
-                    if(input == '3'){
-                        home.bedroomDevicesOn = !home.bedroomDevicesOn;
-                        home.bedroomLightOn = home.bedroomDevicesOn;
-                        home.bedroomAcOn = home.bedroomDevicesOn;
-                        toggleBedroomDevices();
-                    }
                     if(input == '1') toggleBedroomLight();
                     if(input == '2') toggleBedroomAC();
                     if(input == '0') mode = 12;
                 }
                 else if(mode == 125){
-                    if(input == '4'){
-                        home.bathroomDevicesOn = !home.bathroomDevicesOn;
-                        home.bathroomLightOn = home.bathroomDevicesOn;
-                        home.bathroomVentOn = home.bathroomDevicesOn;
-                        home.bathroomWaterOn = home.bathroomDevicesOn;
-                        toggleBathroomDevices();
-                    }
                     if(input == '0') mode = 12;
                     if(input == '1') toggleBathroomLight();
                     if(input == '2') toggleBathroomCH();
                     if(input == '3') toggleBathroomWater();
                 }
                 else if(mode == 126){
-                    if(input == '3'){
-                        home.storageDevicesOn = !home.storageDevicesOn;
-                        home.storageLightOn = home.storageDevicesOn;
-                        home.storageVentOn = home.storageDevicesOn;
-                        toggleStorageDevices();
-                    }
                     if(input == '0') mode = 12;
                     if(input == '1') toggleStorageLight();
                     if(input == '2') toggleStorageVent();
