@@ -72,10 +72,10 @@ typedef struct {
     int systemPowerOn, powerCutOffActive, totalDevices, AllRoomLights, AllRoomAC;
 } SmartHomeState;
 
-SmartHomeState home = {0}; // Khởi tạo tất cả = 0
+SmartHomeState home = {0};
 SmartHomeState savedHome;
 
-//Hallway
+//Hành lang
 int MiddleHallway [][2] = { {10,11}, {20,11}, {30,11}, {40,11}, {50,11}, {60,11}, {70,11} };
 int LeftHallway [][2] = { {0,3}, {0,7}, {0,11}, {0,15}, {0,19} };
 int RightHallway [][2] = { {79,3}, {79,7}, {79,11}, {79,15}, {79,19} };
@@ -147,15 +147,15 @@ int IfPowerOff(){
     if(!home.systemPowerOn) {
         clearMenu();
         gotoxy(0, 24);
-        printf("⚠️  SYSTEM POWER IS OFF!");
+        printf("SYSTEM POWER IS OFF!");
         printf("\nRestore power first to use devices.");
-        Sleep(1500);
+        Sleep(2000);
         FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
         clearMenu();
         return 1;
     } return 0;
 }
-//Toggle function for Hallway
+//Function cho hành lang
 void MiddleONOFF(){
     if(IfPowerOff()) return;
     home.hallwayMiddleLightsOn = !home.hallwayMiddleLightsOn;
@@ -196,7 +196,7 @@ void toggleAllLights() {
     }
 }
 
-//Toggle function for LivingRoom
+//Function cho phòng khách
 void toggleLivingRoomLight(){
     if(IfPowerOff()) return;
     home.livingRoomLightsOn = !home.livingRoomLightsOn;
@@ -370,11 +370,11 @@ void cutOffAllPower(){
 if(home.powerCutOffActive) {
         clearMenu();
         gotoxy(0, 24);
-        printf("Bro really try to cut off power again 🙏💔");
+        printf("Bro really try to cut off power again 🙏");
         printf("\nYou are insane dude");
         Sleep(3000);
         FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE));
-        printf("\n\n[1]: Restore Previous State");
+        printf("\n\n[1]: Restore power");
         printf("\n[ESC]: Continue with power off");
         // Chờ người dùng chọn
         char choice;
@@ -435,8 +435,8 @@ if(home.powerCutOffActive) {
     // Hiển thị thông báo và menu khôi phục
     clearMenu();
     gotoxy(0, 24);
-    printf("⚠️  ALL POWER CUT OFF! ⚠️");
-    printf("\nAll devices have been turned off.");
+    printf(" ALL POWER CUT OFF! ");
+
     printf("\n\n[1]: Restore Power");
     printf("\n[ESC]: Continue with power off");
     
@@ -521,13 +521,13 @@ int main(){
                 printf("[1]: Manual Mode");
                 printf("\n[2]: Automatic Mode");
                 printf("\n[ESC]: Exit");
-                printf("\n\n[4]: HETCUU");
+                printf("\n\n[4]: Cut off all power");
                 if(home.powerCutOffActive){
                     gotoxy(0,29);
                     printf("[5]: Restore power");
                 }
             }
-            
+
             else if(mode == 1){
                 gotoxy(0,24);
                 printf("[1]: Hallway");
@@ -550,9 +550,9 @@ int main(){
                 printf("[6]: Storage\n");
                 printf("\n[0]: Go back");
                 gotoxy(40,24);
-                printf("[7]: Turn %s all lights", home.AllRoomLights ? "off" : "on");
+                printf("[7]: Turn %s all lights  ", home.AllRoomLights ? "off" : "on");
                 gotoxy(40,25);
-                printf("[8]: Turn %s all AC", home.AllRoomAC ? "off" : "on");
+                printf("[8]: Turn %s all AC  ", home.AllRoomAC ? "off" : "on");
             }else if(mode == 121){
                 gotoxy(0,24);
                 printf("[1]: Turn %s light  ", home.livingRoomLightsOn ? "off" : "on");
@@ -592,7 +592,7 @@ int main(){
                 if(home.powerCutOffActive) {
                     clearMenu();
                     gotoxy(0, 24);
-                    printf("⚠️  SYSTEM POWER IS OFF!");
+                    printf(" SYSTEM POWER IS OFF!");
                     printf("\nRestore power first to use.");
                     printf("\n\n[0]: Back to main menu");
                     // Đợi người dùng bấm phím 0 để quay lại menu chính
@@ -600,7 +600,7 @@ int main(){
                     while(1){
                         if(kbhit()){
                             ch = getch();
-                            if(ch == '0' || ch == 27) { // 0 hoặc ESC đều quay lại menu chính
+                            if(ch == '0' || ch == 27) {
                                 mode = 0;
                                 break;
                             }
@@ -618,12 +618,15 @@ int main(){
                 int currentTime = hour * 100 + minute; 
 
                 gotoxy(0,24);
-                printf("Automatic Mode - Device Schedules:");printf("\nHallway Left/Right: 18:30-05:30");
+                printf("   ----Device Schedules----");
+                printf("\nHallway Left/Right: 18:30-05:30");
                 printf("\nHallway Middle: 17:30-23:30");
                 printf("\nAC: 21:30-06:00");
                 printf("\nRoom Lights: 18:00-06:00");
-                printf("\nCurrent time: %02d:%02d", hour, minute);
                 printf("\n\n[0]: Back to main menu");
+                gotoxy(44,24);
+                printf("Current time: %02d:%02d", hour, minute);
+                
     
                 // Hallway Left/Right Lights: 18:30 - 05:30
                 if((currentTime >= 1830) || (currentTime < 530)){
@@ -750,13 +753,13 @@ int main(){
                     }
                 }
                 else if(mode == 1){
-                    if(input == '0') mode = 0;   //Ấn 0
-                    if(input == '1') mode = 11;  //Ấn 1 - vào Hallway
-                    if(input == '2') mode = 12;  //Ấn 2 - vào Rooms
+                    if(input == '0') mode = 0;
+                    if(input == '1') mode = 11;
+                    if(input == '2') mode = 12;
                 }
-                else if(mode == 11){ // Manual Hallway mode
-                    if(input == '0') mode = 1;   //Ấn 0 - quay lại manual menu
-                    if(input == '1'){       //Ấn 1
+                else if(mode == 11){
+                    if(input == '0') mode = 1;
+                    if(input == '1'){
                         home.hallwayLightsOn = !home.hallwayLightsOn;
                         home.hallwayMiddleLightsOn = home.hallwayLightsOn;
                         home.hallwayLeftLightsOn = home.hallwayLightsOn;
@@ -767,8 +770,8 @@ int main(){
                     if(input == '3') MiddleONOFF();
                     if(input == '4') RightONOFF();
                 }
-                else if(mode == 12){ // Manual Rooms mode
-                    if(input == '0') mode = 1;   //Ấn 0 - quay lại manual menu
+                else if(mode == 12){ 
+                    if(input == '0') mode = 1;  
                     if(input == '1') mode = 121;
                     if(input == '2') mode = 122;
                     if(input == '3') mode = 123;
@@ -823,7 +826,7 @@ int main(){
                     if(input == '2') toggleStorageVent();
                 }
 
-                   //Timer mode
+                   //Chế độ hẹn giờ
                 else if(mode == 2){
                     if(input == '0') mode = 0;
                 }
