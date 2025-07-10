@@ -136,10 +136,11 @@ Device bathroomWater = {&home.bathroomWaterOn, bathroomWaterPos, 1, "Water", 9, 
 Device storageLight = {&home.storageLightOn, storageLightPos, 1, "Light", 14, 7};
 Device storageVent = {&home.storageVentOn, storageVentPos, 1, "CH", 5, 7};
 
-void TripleONOFF(){
+void StatusCheck(){
     home.AllRoomLights = (home.livingRoomLightsOn && home.kitchenLightOn && home.bedroomLightOn && home.storageLightOn && home.garageLightOn && home.bathroomLightOn)? 1 : 0;
     home.totalDevices = (home.hallwayMiddleLightsOn && home.hallwayRightLightsOn && home.hallwayLeftLightsOn && home.livingRoomAcOn && home.livingRoomLightsOn && home.livingRoomTVOn && home.kitchenLightOn && home.kitchenVentOn && home.bedroomAcOn && home.bedroomLightOn && home.storageLightOn && home.storageVentOn && home.bathroomLightOn && home.bathroomVentOn && home.bathroomWaterOn && home.garageLightOn && home.garageVentOn)? 1 : 0;
     home.AllRoomAC = (home.bedroomAcOn && home.livingRoomAcOn)? 1 : 0;
+    home.hallwayLightsOn = (home.hallwayLeftLightsOn && home.hallwayRightLightsOn && home.hallwayMiddleLightsOn)? 1 : 0;
 }
 
 int IfPowerOff(){
@@ -162,7 +163,7 @@ void MiddleONOFF(){
         clearAtPositions(MiddleHallway, 7, "🟡");
     }else{
         printAtPositions(MiddleHallway, 7, "⚪");
-    } TripleONOFF();
+    } StatusCheck();
 }
 void LeftONOFF(){
     if(IfPowerOff()) return;
@@ -171,7 +172,7 @@ void LeftONOFF(){
         clearAtPositions(LeftHallway, 5, "🟡");
     }else{
         printAtPositions(LeftHallway, 5, "⚪");
-    } TripleONOFF();
+    } StatusCheck();
 }
 void RightONOFF(){
     if(IfPowerOff()) return;
@@ -180,7 +181,7 @@ void RightONOFF(){
         clearAtPositions(RightHallway, 5, "🟡");
     }else{
         printAtPositions(RightHallway, 5, "⚪");
-    } TripleONOFF();
+    } StatusCheck();
 }
 void toggleAllLights() {
     if(IfPowerOff()) return;
@@ -200,19 +201,19 @@ void toggleLivingRoomLight(){
     if(IfPowerOff()) return;
     home.livingRoomLightsOn = !home.livingRoomLightsOn;
     updateDeviceStatus(&livingRoomLight);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleLivingRoomTV(){
     if(IfPowerOff()) return;
     home.livingRoomTVOn = !home.livingRoomTVOn;
     updateDeviceStatus(&livingRoomTV);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleLivingRoomAC(){
     if(IfPowerOff()) return;
     home.livingRoomAcOn = !home.livingRoomAcOn;
     updateDeviceStatus(&livingRoomAC);
-    TripleONOFF();
+    StatusCheck();
 }
 
 //Toggle function for kitchen
@@ -220,13 +221,13 @@ void toggleKitchenLight(){
     if(IfPowerOff()) return;
     home.kitchenLightOn = !home.kitchenLightOn;
     updateDeviceStatus(&kitchenLight);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleKitchenVent(){
     if(IfPowerOff()) return;
     home.kitchenVentOn = !home.kitchenVentOn;
     updateDeviceStatus(&kitchenVent);
-    TripleONOFF();
+    StatusCheck();
 }
 
 //Toggle function for bedroom
@@ -234,13 +235,13 @@ void toggleBedroomLight(){
     if(IfPowerOff()) return;
     home.bedroomLightOn = !home.bedroomLightOn;
     updateDeviceStatus(&bedroomLight);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleBedroomAC(){
     if(IfPowerOff()) return;
     home.bedroomAcOn = !home.bedroomAcOn;
     updateDeviceStatus(&bedroomAC);
-    TripleONOFF();
+    StatusCheck();
 }
 
 //Toggle function for Garage
@@ -248,13 +249,13 @@ void toggleGarageLight(){
     if(IfPowerOff()) return;
     home.garageLightOn = !home.garageLightOn;
     updateDeviceStatus(&garageLight);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleGarageVent(){
     if(IfPowerOff()) return;
     home.garageVentOn = !home.garageVentOn;
     updateDeviceStatus(&garageVent);
-    TripleONOFF();
+    StatusCheck();
 }
 
 //Toggle function for Bathroom
@@ -262,19 +263,19 @@ void toggleBathroomLight(){
     if(IfPowerOff()) return;
     home.bathroomLightOn = !home.bathroomLightOn;
     updateDeviceStatus(&bathroomLight);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleBathroomCH(){
     if(IfPowerOff()) return;
     home.bathroomVentOn = !home.bathroomVentOn;
     updateDeviceStatus(&bathroomVent);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleBathroomWater(){
     if(IfPowerOff()) return;
     home.bathroomWaterOn = !home.bathroomWaterOn;
     updateDeviceStatus(&bathroomWater);
-    TripleONOFF();
+    StatusCheck();
 }
 
 //Toggle function for Storage
@@ -282,13 +283,13 @@ void toggleStorageLight(){
     if(IfPowerOff()) return;
     home.storageLightOn = !home.storageLightOn;
     updateDeviceStatus(&storageLight);
-    TripleONOFF();
+    StatusCheck();
 }
 void toggleStorageVent(){
     if(IfPowerOff()) return;
     home.storageVentOn = !home.storageVentOn;
     updateDeviceStatus(&storageVent);
-    TripleONOFF();
+    StatusCheck();
 }
 
 //Toggle function for Lights and AC
@@ -312,7 +313,7 @@ void restorePreviousState(){
     home = savedHome;
     
     // Cập nhật các biến tổng hợp
-    TripleONOFF();
+    StatusCheck();
     
     // Hiển thị trạng thái đã lưu
     if(home.hallwayLightsOn){
@@ -322,6 +323,21 @@ void restorePreviousState(){
     }else{
         printAtPositions(MiddleHallway, 7, "⚪");
         printAtPositions(LeftHallway, 5, "⚪");
+        printAtPositions(RightHallway, 5, "⚪");
+    }
+    if(home.hallwayLeftLightsOn){
+        clearAtPositions(LeftHallway, 5, "🟡");
+    }else{
+        printAtPositions(LeftHallway, 5, "⚪");
+    }
+    if(home.hallwayMiddleLightsOn){
+        clearAtPositions(MiddleHallway, 7, "🟡");
+    }else{
+        printAtPositions(MiddleHallway, 7, "⚪");
+    }
+    if(home.hallwayRightLightsOn){
+        clearAtPositions(RightHallway, 5, "🟡");
+    }else{
         printAtPositions(RightHallway, 5, "⚪");
     }
     
@@ -340,6 +356,7 @@ void restorePreviousState(){
     updateDeviceStatus(&bathroomWater);
     updateDeviceStatus(&storageLight);
     updateDeviceStatus(&storageVent);
+    
     
 
     home.systemPowerOn = 1;
@@ -392,7 +409,7 @@ if(home.powerCutOffActive) {
     home.storageLightOn = home.storageVentOn = 0;
     
     // Cập nhật các biến tổng hợp
-    TripleONOFF();
+    StatusCheck();
     
     // Hiển thị tất cả thiết bị ở trạng thái TẮT
     printAtPositions(MiddleHallway, 7, "⚪");
@@ -519,8 +536,8 @@ int main(){
             }else if(mode == 11){
                 gotoxy(0,24);
                 printf("[1]: Turn %s all lights  ", home.hallwayLightsOn ? "off" : "on");
-                printf("\n[2]: Turn %s middle lights  ", home.hallwayLeftLightsOn ? "off" : "on");
-                printf("\n[3]: Turn %s left lights  ", home.hallwayMiddleLightsOn ? "off" : "on");
+                printf("\n[2]: Turn %s left lights  ", home.hallwayLeftLightsOn ? "off" : "on");
+                printf("\n[3]: Turn %s middle lights  ", home.hallwayMiddleLightsOn ? "off" : "on");
                 printf("\n[4]: Turn %s right lights  ", home.hallwayRightLightsOn ? "off" : "on");
                 printf("\n\n[0]: Go back");
             }else if(mode == 12){
@@ -714,7 +731,7 @@ int main(){
                             home.storageLightOn = 0;
                             printColorAtPosition(storageLightPos, 1, "Light", 7);
                         }
-                    } TripleONOFF();
+                    } StatusCheck();
                 }
             if(kbhit()) {
                 input = getch();
@@ -734,12 +751,12 @@ int main(){
                 }
                 else if(mode == 1){
                     if(input == '0') mode = 0;   //Ấn 0
-                    else if(input == '1') mode = 11;  //Ấn 1 - vào Hallway
-                    else if(input == '2') mode = 12;  //Ấn 2 - vào Rooms
+                    if(input == '1') mode = 11;  //Ấn 1 - vào Hallway
+                    if(input == '2') mode = 12;  //Ấn 2 - vào Rooms
                 }
                 else if(mode == 11){ // Manual Hallway mode
                     if(input == '0') mode = 1;   //Ấn 0 - quay lại manual menu
-                    else if(input == '1'){       //Ấn 1
+                    if(input == '1'){       //Ấn 1
                         home.hallwayLightsOn = !home.hallwayLightsOn;
                         home.hallwayMiddleLightsOn = home.hallwayLightsOn;
                         home.hallwayLeftLightsOn = home.hallwayLightsOn;
