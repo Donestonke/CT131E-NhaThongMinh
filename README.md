@@ -4,6 +4,6 @@ In nhiều lần tại nhiều vị trí xem file AddLight.
 
 Khung nhà xem ở spine.txt
 
-Xem code ở source.c 
+Xem code ở source-new.c hoặc source.c(cũ)
 
-source-new.c sử dụng cách gọi biến khác (thầy có thể đánh giá cao hơn,... chắc vậy?)
+
