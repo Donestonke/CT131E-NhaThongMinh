@@ -624,8 +624,10 @@ int main(){
                 printf("\nAC: 21:30-06:00");
                 printf("\nRoom Lights: 18:00-06:00");
                 printf("\n\n[0]: Back to main menu");
-                gotoxy(44,24);
-                printf("Current time: %02d:%02d", hour, minute);
+                gotoxy(44,25);
+                printf("Current time");
+                gotoxy(47,26);
+                printf("%02d:%02d", hour, minute);
                 
     
                 // Hallway Left/Right Lights: 18:30 - 05:30
@@ -650,7 +652,7 @@ int main(){
                     }
     
                     // Hallway Middle Lights: 17:30 - 23:30
-                    if((currentTime >= 1730) && (currentTime < 2330)){
+                    if((currentTime >= 1730) || (currentTime < 2330)){
                         if(!home.hallwayMiddleLightsOn){
                             home.hallwayMiddleLightsOn = 1;
                             clearAtPositions(MiddleHallway, 7, "🟡");
@@ -684,7 +686,7 @@ int main(){
                     }
                     
                     // Room Lights: 18:00 - 06:00 (Living Room, Kitchen, Garage, Bedroom, Bathroom, Storage)
-                     if((currentTime >= 1800) || (currentTime < 600)){
+                     if((currentTime >= 1800) || (currentTime < 2330)){
                         if(!home.livingRoomLightsOn){
                             home.livingRoomLightsOn = 1;
                             printColorAtPosition(livingRoomLightPos, 1, "Light", 14);
