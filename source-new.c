@@ -622,7 +622,7 @@ int main(){
                 printf("\nHallway Left/Right: 18:30-05:30");
                 printf("\nHallway Middle: 17:30-23:30");
                 printf("\nAC: 21:30-06:00");
-                printf("\nRoom Lights: 18:00-06:00");
+                printf("\nRoom Lights: 18:00-23:30");
                 printf("\n\n[0]: Back to main menu");
                 gotoxy(44,25);
                 printf("Current time");
