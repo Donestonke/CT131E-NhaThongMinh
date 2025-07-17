@@ -652,7 +652,7 @@ int main(){
                     }
     
                     // Hallway Middle Lights: 17:30 - 23:30
-                    if((currentTime >= 1730) || (currentTime < 2330)){
+                    if((currentTime >= 1730) && (currentTime < 2330)){
                         if(!home.hallwayMiddleLightsOn){
                             home.hallwayMiddleLightsOn = 1;
                             clearAtPositions(MiddleHallway, 7, "🟡");
@@ -686,8 +686,8 @@ int main(){
                     }
                     
                     // Room Lights: 18:00 - 06:00 (Living Room, Kitchen, Garage, Bedroom, Bathroom, Storage)
-                     if((currentTime >= 1800) || (currentTime < 2330)){
-                        if(!home.livingRoomLightsOn){
+                     if((currentTime >= 1800) && (currentTime < 2330)){
+                      if(!home.livingRoomLightsOn){
                             home.livingRoomLightsOn = 1;
                             printColorAtPosition(livingRoomLightPos, 1, "Light", 14);
                         }
